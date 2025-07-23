@@ -1,0 +1,94 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Profile";
+    ViewData["ActivePage"] = ManageNavPages.Index;
+}
+<div class="row">
+    <div class="col-12 col-md-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">               
+                <form id="profile-form" method="post" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+                            <div class="form-floating mb-3">
+                                <input asp-for="Input.FirstName" class="form-control" autocomplete="off" aria-required="true" placeholder="First Name" />
+                                <label asp-for="Input.FirstName">First Name</label>
+                                <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input asp-for="Input.LastName" class="form-control" autocomplete="off" aria-required="true" placeholder="Last Name" />
+                                <label asp-for="Input.LastName">Last Name</label>
+                                <span asp-validation-for="Input.LastName" class="text-danger"></span>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input asp-for="Input.Username" class="form-control" autocomplete="off" aria-required="true" placeholder="User Name" />
+                                <label asp-for="Input.Username">User Name</label>
+                                <span asp-validation-for="Input.Username" class="text-danger"></span>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input asp-for="Input.PhoneNumber" class="form-control" placeholder="Please enter your phone number." />
+                                <label asp-for="Input.PhoneNumber" class="form-label"></label>
+                                <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input asp-for="Input.DateOfBirth" class="form-control" type="date" placeholder="Please enter date of birth." />
+                                <label asp-for="Input.DateOfBirth" class="form-label"></label>
+                                <span asp-validation-for="Input.DateOfBirth" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                @if (Model.Input.ProfilePicture != null)
+                                {
+                                    <img id="profilePicture" class="img-thumbnail" style="width:200px;height:200px; object-fit:cover" src="data:image/*;base64,@(Convert.ToBase64String(Model.Input.ProfilePicture))">
+                                }
+                                else
+                                {
+                                    <img id="profilePicture" class="img-thumbnail" style="width:200px;height:200px; object-fit:cover" src="">
+                                }
+                                <input type="file" accept=",.jpg,.jpeg,.png" asp-for="Input.ProfilePicture" class="form-control my-3" />
+                                <span class="badge text-muted">Max. 50 KB image is allowed.</span>
+                                <span asp-validation-for="Input.ProfilePicture" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <button id="update-profile-button" type="submit" class="w-100 btn btn-primary btn-icon-text"> <i class="ti-file btn-icon-prepend"></i> Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12 pt-3">
+        <partial name="_StatusMessage" for="StatusMessage" />
+        <partial name="_StatusMessage" for="UserNameChangeLimitMessage" />
+    </div>
+</div>
+
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.getElementById('Input_ProfilePicture').onchange = function () {
+            var filesize = this.files[0].size;
+            var imgrsc = window.URL.createObjectURL(this.files[0]);
+            if (filesize <= 51200) {
+                document.getElementById('profilePicture').src = imgrsc
+            } else {
+                //alert('File size should be less than 50KB');
+                document.getElementById('Input_ProfilePicture').value = '';
+                Swal.fire({
+                    imageUrl: imgrsc,
+                    imageHeight: 100,
+                    icon: "error",
+                    title: "Image file size issue.",
+                    text: "Image size should be less than 50 KB.Please resize and then try it again."
+                });
+            }
+        }
+    </script>
+}
