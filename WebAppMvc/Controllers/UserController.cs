@@ -145,5 +145,28 @@ namespace WebAppMvc.Controllers
 
             return PartialView("_FeedbackEditUpdate", feedback);
         }
+
+        [HttpPost, ActionName("Delete")]        
+        public async Task<IActionResult> Delete(int id)
+        {
+            var feedback = await _context.Feedbacks.FindAsync(id);
+            if (feedback != null)
+            {
+                if (!string.IsNullOrEmpty(feedback.Url))
+                {
+                    string wwwRootPath = _webHostEnvironment.WebRootPath;
+                    var filePath = Path.Combine(wwwRootPath, "uploads", feedback.Url);
+
+                    if (System.IO.File.Exists(filePath))
+                    {
+                        System.IO.File.Delete(filePath);
+                    }
+                }
+                _context.Feedbacks.Remove(feedback);
+            }
+            await _context.SaveChangesAsync();
+            //return RedirectToAction(nameof(Index));
+            return Json(new { success = true, message = "Deleted Successfully" });
+        }
     }
 }
