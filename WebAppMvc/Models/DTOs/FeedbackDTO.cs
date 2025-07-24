@@ -40,7 +40,7 @@ namespace WebAppMvc.Models.DTOs
         [Required, StringLength(2000)]
         public string Message { get; set; } = string.Empty;
 
-        public string Url { get; set; }=string.Empty;
+        public string? Url { get; set; }=string.Empty;
         [NotMapped]
         public IFormFile? Attachment { get; set; }
     }
