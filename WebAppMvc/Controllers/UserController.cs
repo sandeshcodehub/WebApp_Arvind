@@ -26,7 +26,7 @@ namespace WebAppMvc.Controllers
 
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Feedbacks.ToListAsync());
+            return View();
         }
 
         public IActionResult GiveFeedback()
@@ -96,51 +96,58 @@ namespace WebAppMvc.Controllers
             }
             if (ModelState.IsValid)
             {
-                string url = "";
-                string finalpath = "";
-                if (feedback.Attachment != null)
+                Feedback newFeedback = _context.Feedbacks.Where(x => x.Id == id).FirstOrDefault()!;
+                if (newFeedback != null)
                 {
-                    string fileName = "Feedback_" + DateTime.Now.Ticks;
-                    string wwwRootPath = _webHostEnvironment.WebRootPath;
-                    string uploadingFolder = _config["Uploading:UserDataUpload"]!;
-                    string extension = Path.GetExtension(feedback.Attachment.FileName);
-                    url = fileName + extension;
-                    if (!string.IsNullOrEmpty(feedback.Url))
+                    string url = "";
+                    string finalpath = "";
+                    if (feedback.Attachment != null)
                     {
-                        url = feedback.Url;
-
+                        string fileName = "Feedback_" + DateTime.Now.Ticks;
+                        string wwwRootPath = _webHostEnvironment.WebRootPath;
+                        string uploadingFolder = _config["Uploading:UserDataUpload"]!;
+                        string extension = Path.GetExtension(feedback.Attachment.FileName);
+                        url = fileName + extension;
                         if (!string.IsNullOrEmpty(feedback.Url))
                         {
-                            var delfilePath = Path.Combine(wwwRootPath, uploadingFolder, feedback.Url);
-                            if (System.IO.File.Exists(delfilePath))
+                            url = feedback.Url;
+
+                            if (!string.IsNullOrEmpty(feedback.Url))
                             {
-                                System.IO.File.Delete(delfilePath);
+                                var delfilePath = Path.Combine(wwwRootPath, uploadingFolder, feedback.Url);
+                                if (System.IO.File.Exists(delfilePath))
+                                {
+                                    System.IO.File.Delete(delfilePath);
+                                }
                             }
                         }
+
+                        finalpath = Path.Combine(wwwRootPath, uploadingFolder, url);
+
+                        using (var fileStream = new FileStream(finalpath, FileMode.Create))
+                        {
+                            await feedback.Attachment.CopyToAsync(fileStream);
+                        }
                     }
-
-                    finalpath = Path.Combine(wwwRootPath, uploadingFolder, url);
-
-                    using (var fileStream = new FileStream(finalpath, FileMode.Create))
+                    else
                     {
-                        await feedback.Attachment.CopyToAsync(fileStream);
+                        url = feedback.Url!;
                     }
+
+                    newFeedback.Name = feedback.Name;
+                    newFeedback.Email = feedback.Email;
+                    newFeedback.Mobile = feedback.Mobile;
+                    newFeedback.Message = feedback.Message;
+                    newFeedback.Url = url;
+
+                    _context.Update(newFeedback);
+                    _context.SaveChanges();
+                    return RedirectToAction("Index");
                 }
                 else
                 {
-                    url = feedback.Url;
+                    return NotFound();
                 }
-                Feedback newFeedback = _context.Feedbacks.Where(x => x.Id == id).FirstOrDefault()!;
-                newFeedback.Name = feedback.Name;
-                newFeedback.Email = feedback.Email;
-                newFeedback.Mobile = feedback.Mobile;
-                newFeedback.Message = feedback.Message;
-                newFeedback.Url = url;
-
-
-                _context.Update(newFeedback);
-                _context.SaveChanges();
-                return RedirectToAction("Index");
             }
 
             return PartialView("_FeedbackEditUpdate", feedback);

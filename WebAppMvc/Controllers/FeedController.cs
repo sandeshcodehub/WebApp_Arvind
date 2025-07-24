@@ -167,47 +167,7 @@ namespace WebAppMvc.Controllers
             return _context.Feedbacks.Any(e => e.Id == id);
         }
 
-        public IActionResult CreateFeed()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateFeed(FeedbackAddDTO feedback)
-        {
-            if (ModelState.IsValid)
-            {
-                string url = "";
-                if(feedback.Attachment != null)
-                {
-                    string wwwRootPath = _webHostEnvironment.WebRootPath;
-                    string fileName = Guid.NewGuid().ToString();
-                    string extension = Path.GetExtension(feedback.Attachment.FileName);
-                    url = fileName + extension;
-                    string path = Path.Combine(wwwRootPath + "/Uploads/", url);
-                    using (var fileStream = new FileStream(path, FileMode.Create))
-                    {
-                        await feedback.Attachment.CopyToAsync(fileStream);
-                    }
-                }
-               
-                Feedback newFeedback = new Feedback()
-                {
-                    Name = feedback.Name,
-                    Email = feedback.Email,
-                    Mobile = feedback.Mobile,
-                    Message = feedback.Message,
-                    Url = url,
-                    RegisterDate = DateTime.Now
-                };
-
-
-                _context.Feedbacks.Add(newFeedback);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(feedback);
-        }
+        
+        
     }
 }
