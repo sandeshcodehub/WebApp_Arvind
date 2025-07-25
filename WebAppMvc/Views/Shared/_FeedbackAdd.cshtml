@@ -1,8 +1,6 @@
-﻿@model FeedbackEditDTO
-<form asp-action="EditFeedback" enctype="multipart/form-data" id="editForm" asp-controller="User">
+﻿@model FeedbackAddDTO
+<form asp-action="PostFeedback" enctype="multipart/form-data" method="post" id="addForm" >
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-    <input type="hidden" asp-for="Id" />
     <div class="form-group mb-3">
         <label asp-for="Name" class="control-label"></label>
         <input asp-for="Name" class="form-control" />
@@ -10,12 +8,12 @@
     </div>
     <div class="form-group mb-3">
         <label asp-for="Email" class="control-label"></label>
-        <input asp-for="Email" class="form-control" type="email" />
+        <input asp-for="Email" class="form-control" />
         <span asp-validation-for="Email" class="text-danger"></span>
     </div>
     <div class="form-group mb-3">
         <label asp-for="Mobile" class="control-label"></label>
-        <input asp-for="Mobile" class="form-control" type="tel" />
+        <input asp-for="Mobile" class="form-control" />
         <span asp-validation-for="Mobile" class="text-danger"></span>
     </div>
     <div class="form-group mb-3">
@@ -24,22 +22,17 @@
         <span asp-validation-for="Message" class="text-danger"></span>
     </div>
     <div class="form-group mb-3">
-        <label class="control-label">Attachment</label>
-        <a href="~/uploads/@Model.Url" target="_blank">Download</a>
-        <input type="hidden" asp-for="Url" />
-    </div>
-    <div class="form-group mb-3">
         <label asp-for="Attachment" class="control-label"></label>
         <input asp-for="Attachment" type="file" accept=".pdf,.doc,.docx" class="form-control" />
         <span asp-validation-for="Attachment" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <button type="button" class="btn btn-secondary mx-2" data-bs-dismiss="modal">Close</button>
-        <input type="submit" value="Save Changes" class="btn btn-primary" />
+        <button type="button" class="btn btn-secondary mr-2" data-bs-dismiss="modal">Close</button>
+        <input type="submit" value="Save" class="btn btn-primary" />
+        <input type="button" value="Save ME" class="btn btn-success" id="btnSave" />
     </div>
 </form>
-
 <script>
     // Re-parse the form for validation after loading via AJAX
-    $.validator.unobtrusive.parse('#editForm');     
+    $.validator.unobtrusive.parse('#addForm');
 </script>

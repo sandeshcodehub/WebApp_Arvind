@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebAppMvc.Data;
 using WebAppMvc.Domain.Entities;
@@ -11,8 +12,6 @@ namespace WebAppMvc.Controllers
     [Authorize(Roles = "User")]
     public class UserController : Controller
     {
-
-
         private readonly AppDbContext _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IConfiguration _config;
@@ -23,12 +22,10 @@ namespace WebAppMvc.Controllers
             _webHostEnvironment = webHostEnvironment;
             _config = configuration;
         }
-
         public async Task<IActionResult> Index()
         {
             return View();
         }
-
         public IActionResult GiveFeedback()
         {
             return View();
@@ -77,6 +74,76 @@ namespace WebAppMvc.Controllers
             return View(feedback);
         }
 
+
+        //Handle by Jquery/Ajax Operation...
+
+        [AcceptVerbs("GET", "POST")]
+        public IActionResult IsNameAvailable(string name)
+        {
+            bool exists = _context.Feedbacks.Any(e => e.Name == name);
+            return Json(!exists);
+        }
+
+        [HttpGet]
+        public IActionResult PostFeedback()
+        {
+            var feed = new FeedbackAddDTO();
+            //ViewBag.Genders = new SelectList(_context.Genders.ToList(), "Id", "Name");
+            return PartialView("_FeedbackAdd",feed);
+        }
+
+        //Add New
+        [HttpPost]
+        public async Task<ActionResult> PostFeedback(FeedbackAddDTO feedback)
+        {
+            string url = "";
+            string finalpath = "";
+            if (feedback.Attachment != null)
+            {
+                string wwwRootPath = _webHostEnvironment.WebRootPath;
+                string uploadingFolder = _config["Uploading:UserDataUpload"]!;
+                string fileName = "Feedback_" + DateTime.Now.Ticks;
+                string extension = Path.GetExtension(feedback.Attachment.FileName);
+                url = fileName + extension;
+                finalpath = Path.Combine(wwwRootPath, uploadingFolder, url);
+                using (var fileStream = new FileStream(finalpath, FileMode.Create))
+                {
+                    await feedback.Attachment.CopyToAsync(fileStream);
+                }
+            }
+            Feedback newFeedback = new Feedback()
+            {
+                Name = feedback.Name,
+                Email = feedback.Email,
+                Mobile = feedback.Mobile,
+                Message = feedback.Message,
+                Url = url,
+                RegisterDate = DateTime.Now
+            };
+
+            _context.Feedbacks.Add(newFeedback);
+            int i = await _context.SaveChangesAsync();
+            if (i > 0)
+            {                
+                 return Json(new { success = true, message = "Saved Successfully" });
+            }
+            else
+            {               
+               return Json(new { success = false, message = "Failed." });                
+            }
+        }
+
+        //List
+        [HttpGet]
+        public async Task<IActionResult> GetAllFeedback()
+        {
+            var feed =await _context.Feedbacks.ToListAsync();
+            if (feed == null)
+                return NotFound();
+            return PartialView("_FeedbackList", feed);
+        }  
+
+        //Edit/{0}
         [HttpGet]
         public IActionResult EditFeedback(int id)
         {
@@ -87,6 +154,7 @@ namespace WebAppMvc.Controllers
             return PartialView("_FeedbackEditUpdate", feed);
         }
 
+        //Update
         [HttpPost]
         public async Task<IActionResult> EditFeedback(int id, FeedbackEditDTO feedback)
         {
@@ -153,7 +221,8 @@ namespace WebAppMvc.Controllers
             return PartialView("_FeedbackEditUpdate", feedback);
         }
 
-        [HttpPost, ActionName("Delete")]        
+        //Delete
+        [HttpDelete]        
         public async Task<IActionResult> Delete(int id)
         {
             var feedback = await _context.Feedbacks.FindAsync(id);
@@ -174,6 +243,6 @@ namespace WebAppMvc.Controllers
             await _context.SaveChangesAsync();
             //return RedirectToAction(nameof(Index));
             return Json(new { success = true, message = "Deleted Successfully" });
-        }
+        }        
     }
 }

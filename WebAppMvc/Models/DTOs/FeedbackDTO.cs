@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using WebAppMvc.Domain.Entities;
 
@@ -7,6 +8,7 @@ namespace WebAppMvc.Models.DTOs
     public class FeedbackAddDTO
     {
         [Required, StringLength(100)]
+        [Remote(action: "IsNameAvailable", controller: "User", ErrorMessage = "Name already exists")]
         public string Name { get; set; }=string.Empty;
 
         [Required, StringLength(100)]
@@ -23,11 +25,10 @@ namespace WebAppMvc.Models.DTOs
     }
 
     public class FeedbackEditDTO
-    {
-       
+    {       
         public int Id { get; set; }
 
-        [Required, StringLength(100)]
+        [Required, StringLength(100)]        
         public string Name { get; set; } = string.Empty;
 
         [Required, StringLength(100)]

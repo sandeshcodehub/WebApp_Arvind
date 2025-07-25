@@ -1,4 +1,4 @@
-﻿@model IEnumerable<WebAppMvc.Domain.Entities.Feedback>
+﻿@model IEnumerable<Feedback>
 <table class="table">
     <thead>
         <tr>
@@ -40,7 +40,16 @@
                     @Html.DisplayFor(modelItem => item.Message)
                 </td>
                 <td>
-                    <a href="~/uploads/@item.Url" target="_blank">Download</a>
+                    @{
+                        if (item.Url != "")
+                        {
+                            <a href="~/uploads/@item.Url" target="_blank">Download</a>
+                        }
+                        else
+                        {
+                            <span>NA</span>
+                        }
+                    }
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.RegisterDate)

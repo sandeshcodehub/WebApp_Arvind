@@ -15,7 +15,7 @@ namespace WebAppMvc.Domain.Entities
         [Required, StringLength(2000)]
         public string Message { get; set; }
         [StringLength(100)]
-        public string Url { get; set; }
+        public string? Url { get; set; }
         public DateTime RegisterDate { get; set; }=DateTime.Now;
     }
 }

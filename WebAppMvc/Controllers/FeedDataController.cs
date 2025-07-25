@@ -144,3 +144,38 @@ namespace WebAppMvc.Controllers
         }
     }
 }
+
+//   $.get('/api/feeddata/', function (data) {
+//     let html = `<table class="table table-bordered">
+//                     <thead>
+//                         <tr>
+//                             <th>Name</th>
+//                             <th>Email</th>
+//                             <th>Mobile</th>
+//                             <th>Message</th>
+//                             <th>File</th>
+//                             <th>Date</th>
+//                             <th>Actions</th>
+//                         </tr>
+//                     </thead>
+//                     <tbody>`;
+
+//     data.forEach(item => {
+//         let fileLink = item.url ? `<a href="/uploads/${item.url}" target="_blank">Download</a>` : "No File";
+//         html += `<tr>
+//                     <td>${item.name}</td>
+//                     <td>${item.email}</td>
+//                     <td>${item.mobile}</td>
+//                     <td>${item.message}</td>
+//                     <td>${fileLink}</td>
+//                     <td>${new Date(item.registerDate).toLocaleString()}</td>
+//                     <td>
+//                         <a class="btn btn-link edit-btn" data-id="${item.id}" href="#">Edit</a>|
+//                         <a class="btn btn-link delete-btn" data-id="${item.id}" href="#">Delete</a>
+//                     </td>
+//                  </tr>`;
+//     });
+
+//     html += "</tbody></table>";
+//     $('#feedbackList').html(html);
+// });
