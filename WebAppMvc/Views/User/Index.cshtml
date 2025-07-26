@@ -10,8 +10,8 @@
 <!-- Bootstrap Modal Edit-->
 <div class="modal fade" id="myModal" tabindex="-1">
     <div class="modal-dialog">
-        <div class="modal-content">      
-            <div class="modal-body" id="myModalContent">               
+        <div class="modal-content">           
+            <div class="modal-body" id="myModalContent">
                 <!-- Partial view will be loaded here -->
             </div>
         </div>
@@ -28,7 +28,7 @@
 
         function loadFeedbacks() {
              $.get('/User/GetAllFeedback', function (data) {
-                    $('#feedbackList').html(data);                   
+                    $('#feedbackList').html(data);
                 });
         }
 
@@ -41,7 +41,7 @@
             $(document).on('click', '.edit-btn', function (e) {
                 e.preventDefault();
                 var id = $(this).data('id');
-                $.get('/User/EditFeedback/' + id, function (data) {                    
+                $.get('/User/EditFeedback/' + id, function (data) {                   
                     $('#myModalContent').html(data);
                     $('#myModal').modal('show');
                 });
@@ -69,8 +69,8 @@
             });
 
             //add model call
-            $('#AddNew').click(function () {               
-                $.get('/User/PostFeedback' , function (data) {                    
+            $('#AddNew').click(function () {
+                $.get('/User/PostFeedback' , function (data) {
                     $('#myModalContent').html(data);
                     $('#myModal').modal('show');
                 });
@@ -89,7 +89,7 @@
             //                 processData: false,
             //                 contentType: false,
             //                 success: function (res) {
-            //                     if (res.success) {                       
+            //                     if (res.success) {
             //                         $('#myModal').modal('hide');
             //                         alert(res.message);
             //                         $('#employeeForm')[0].reset();
@@ -121,9 +121,40 @@
                             processData: false,
                             contentType: false,
                             success: function (res) {
-                                if (res.success) {                                    
+                                if (res.success) {
                                     alert(res.message);
-                                    $('#myModal').modal('hide');                                    
+                                    $('#myModal').modal('hide');
+                                    $('#msgArea').text('');
+                                    loadFeedbacks();
+                                }
+                                else
+                                {
+                                    $('#msgArea').text(res.message);
+                                }
+                            },
+                            error: function () {
+                                $('#msgArea').text("Something went wrong.");
+                            }
+                        });
+            });
+
+            $(document).on('click', '#btnUpdate', function (e) {
+                         e.preventDefault();
+                         var form = $('#editForm')[0];
+                         var formData = new FormData(form);
+
+                        if (!$(form).valid()) return;
+
+                        $.ajax({
+                            url: '/User/EditFeedback',
+                            type: 'POST',
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            success: function (res) {
+                                if (res.success) {
+                                    alert(res.message);
+                                    $('#myModal').modal('hide');
                                     $('#msgArea').text('');
                                     loadFeedbacks();
                                 }

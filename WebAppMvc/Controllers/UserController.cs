@@ -75,6 +75,11 @@ namespace WebAppMvc.Controllers
         }
 
 
+        public IActionResult FeedbackTable()
+        {
+            return View();
+        }
+
         //Handle by Jquery/Ajax Operation...
 
         [AcceptVerbs("GET", "POST")]
@@ -209,8 +214,17 @@ namespace WebAppMvc.Controllers
                     newFeedback.Url = url;
 
                     _context.Update(newFeedback);
-                    _context.SaveChanges();
-                    return RedirectToAction("Index");
+                    //_context.SaveChanges();
+                    //return RedirectToAction("Index");
+                    int i = await _context.SaveChangesAsync();
+                    if (i > 0)
+                    {
+                        return Json(new { success = true, message = "Update Successfully" });
+                    }
+                    else
+                    {
+                        return Json(new { success = false, message = "Failed." });
+                    }
                 }
                 else
                 {
@@ -244,5 +258,62 @@ namespace WebAppMvc.Controllers
             //return RedirectToAction(nameof(Index));
             return Json(new { success = true, message = "Deleted Successfully" });
         }        
+
+        //Datatable
+        [HttpPost]
+        public async Task<IActionResult> GetFeedbackTable()
+        {
+            var draw = Request.Form["draw"].FirstOrDefault();
+            var start = Request.Form["start"].FirstOrDefault();
+            var length = Request.Form["length"].FirstOrDefault();
+            var sortColumnIndex = Request.Form["order[0][column]"].FirstOrDefault();
+            var sortDirection = Request.Form["order[0][dir]"].FirstOrDefault();
+            var searchValue = Request.Form["search[value]"].FirstOrDefault();
+
+            int pageSize = length != null ? Convert.ToInt32(length) : 0;
+            int skip = start != null ? Convert.ToInt32(start) : 0;
+
+            var dataQuery = _context.Feedbacks.AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchValue))
+            {
+                dataQuery = dataQuery.Where(e => e.Name.Contains(searchValue) ||
+                                                 e.Email.Contains(searchValue) ||
+                                                 e.Mobile.Contains(searchValue));
+            }
+
+            var recordsTotal = await dataQuery.CountAsync();
+
+            // Sorting
+            if (sortColumnIndex != null)
+            {
+                switch (sortColumnIndex)
+                {
+                    case "0":
+                        dataQuery = sortDirection == "asc" ? dataQuery.OrderBy(e => e.Name) : dataQuery.OrderByDescending(e => e.Name);
+                        break;
+                    case "1":
+                        dataQuery = sortDirection == "asc" ? dataQuery.OrderBy(e => e.Email) : dataQuery.OrderByDescending(e => e.Email);
+                        break;
+                    case "2":
+                        dataQuery = sortDirection == "asc" ? dataQuery.OrderBy(e => e.Mobile) : dataQuery.OrderByDescending(e => e.Mobile);
+                        break;
+                    default:
+                        dataQuery = dataQuery.OrderBy(e => e.Id);
+                        break;
+                }
+            }
+
+            var data = await dataQuery.Skip(skip).Take(pageSize).ToListAsync();
+
+            return Json(new
+            {
+                draw = draw,
+                recordsFiltered = recordsTotal,
+                recordsTotal = recordsTotal,
+                data = data
+            });
+        }
+    
     }
 }
