@@ -1,0 +1,71 @@
+﻿@model X.PagedList.IPagedList<Feedback>
+@using X.PagedList.Mvc.Core
+
+@{
+    ViewData["Title"] = "Feedback Paged List";
+}
+
+<h1>Feedback Paged List</h1>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(m => m[0].Name)</th>
+            <th>@Html.DisplayNameFor(m => m[0].Email)</th>
+            <th>@Html.DisplayNameFor(m => m[0].Mobile)</th>
+            <th>@Html.DisplayNameFor(m => m[0].Message)</th>
+            <th>@Html.DisplayNameFor(m => m[0].Url)</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.Email</td>
+                <td>@item.Mobile</td>
+                <td>@item.Message</td>
+                <td>@item.Url</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Pagination Controls -->
+<div class="text-center">
+    @Html.PagedListPager(Model, page => Url.Action("FeedbackPagedList", new { page }),
+    new PagedListRenderOptions
+    {
+        DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+        DisplayLinkToLastPage = PagedListDisplayMode.Always,
+        DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+        DisplayLinkToNextPage = PagedListDisplayMode.Always,
+        DisplayLinkToIndividualPages = true,
+        MaximumPageNumbersToDisplay = 5,
+        ClassToApplyToFirstListItemInPager = "page-item",
+        ClassToApplyToLastListItemInPager = "page-item",      
+        LinkToPreviousPageFormat = "«",
+        LinkToNextPageFormat = "»",
+        UlElementClasses = new[] { "pagination" },
+        PageClasses = new[] { "page-link" }
+    })
+
+    <span>Default Paging Control</span>
+    @Html.PagedListPager(Model, page => Url.Action("FeedbackPagedList", new { page = page }), new PagedListRenderOptions
+        { UlElementClasses = new[] { "pagination" },PageClasses = new[] { "page-link" }})
+
+    <span>Minimal Paging Control</span>
+    @Html.PagedListPager(Model, page => Url.Action("FeedbackPagedList", new { page = page }), PagedListRenderOptions.Minimal)
+
+    <span>Minimal Paging Control w/ Page Count Text</span>
+    @Html.PagedListPager(Model, page => Url.Action("FeedbackPagedList", new { page = page }), PagedListRenderOptions.MinimalWithPageCountText)
+
+    <span>Minimal Paging Control w/ Item Count Text</span>
+    @Html.PagedListPager(Model, page => Url.Action("FeedbackPagedList", new { page = page }), PagedListRenderOptions.MinimalWithItemCountText)
+
+    <span>Page Numbers Only</span>
+    @Html.PagedListPager(Model, page => Url.Action("FeedbackPagedList", new { page = page }), PagedListRenderOptions.PageNumbersOnly)
+
+    <span>Only Show Five Pages At A Time</span>
+    @Html.PagedListPager(Model, page => Url.Action("FeedbackPagedList", new { page = page }), PagedListRenderOptions.OnlyShowFivePagesAtATime)
+</div>

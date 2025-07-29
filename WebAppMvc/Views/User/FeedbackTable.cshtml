@@ -1,7 +1,12 @@
 ﻿@{
     ViewData["Title"] = "Feedback Table";
 }
-
+<style>
+    .highlight {
+        background-color: #fff3cd !important; /* Light yellow */
+        transition: background-color 0.5s ease;
+    }
+</style>
 <h3>Feedback Table</h3>
 <button class="btn btn-link" data-id="Add" id="AddNew">Add Feedback</button>
 <div id="msgArea"></div>
@@ -150,7 +155,8 @@
                                     $('#myModal').modal('hide');
                                     $('#msgArea').text('');
                                    //Reload DataTable after update
-                                    table.ajax.reload(null, false); // false = keep current pagination
+                                   table.ajax.reload(null, false); // false = keep current pagination
+                                 
                                 }
                                 else
                                 {

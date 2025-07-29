@@ -49,6 +49,12 @@
                                         <li class="nav-item">
                                             <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="FeedbackTable">Feedback Table</a>
                                         </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="FeedbackPagedList">Paged List</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="IndexPaged">Paged List : Ajax</a>
+                                        </li>
                                     }
                                     else if (userType == UserProfileType.Admin.ToString() || userType == UserProfileType.SuperAdmin.ToString())
                                     {

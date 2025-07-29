@@ -1,0 +1,33 @@
+﻿
+@{
+    ViewData["Title"] = "IndexPaged";
+}
+
+<h1>Index Paged</h1>
+
+
+
+<div id="feedTableContainer">
+    @await Html.PartialAsync("_PagedListFeeds", new X.PagedList.StaticPagedList<Feedback>(new List<Feedback>(), 1, 5, 0))
+</div>
+
+@section Scripts {
+    <script>
+        function loadPage(pageNumber) {
+            $.get('@Url.Action("FeedbackTable", "User")', { page: pageNumber }, function (data) {
+                $('#feedTableContainer').html(data);
+            });
+        }
+
+        // Initial load
+        $(document).ready(function () {
+            loadPage(1);
+            // Delegate click event to future pagination links
+            $(document).on("click", ".pagination a", function (e) {
+                e.preventDefault();
+                var page = $(this).attr("data-page");
+                loadPage(page);
+            });
+        });
+    </script>
+}

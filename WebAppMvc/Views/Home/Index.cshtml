@@ -1,4 +1,6 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.WebUtilities
+@using System.Text
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -7,8 +9,19 @@
 </div>
 
 
+@{
+    var code = "Hello Test for WebEncoders.Base64UrlEncode() and Decoding() " + DateTime.Now.Ticks.ToString();
+    string? code1 = null;
+
+    code=WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+
+    code1 = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
+}
+<span>@code</span><br />
+<span>@code1</span><br/>
+
 <!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal" data-info="info from button">
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal" data-info="@code1">
     Launch demo modal
 </button>
 
