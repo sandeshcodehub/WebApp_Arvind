@@ -340,9 +340,9 @@ public class UserController : Controller
 
     // AJAX endpoint for partial pagination
     [HttpGet]
-    public async Task<IActionResult> FeedbackTable(int? page)
+    public async Task<IActionResult> FeedbackTablePaged(int? page)
     {
-        int pageSize = 5;
+        int pageSize = 3;
         int pageNumber = page ?? 1;
         var feeds =  _context.Feedbacks.OrderBy(p => p.Id).ToPagedList(pageNumber, pageSize);
         return PartialView("_PagedListFeeds", feeds);

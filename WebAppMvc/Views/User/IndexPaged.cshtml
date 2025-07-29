@@ -8,13 +8,13 @@
 
 
 <div id="feedTableContainer">
-    @await Html.PartialAsync("_PagedListFeeds", new X.PagedList.StaticPagedList<Feedback>(new List<Feedback>(), 1, 5, 0))
+    @await Html.PartialAsync("_PagedListFeeds", new X.PagedList.StaticPagedList<Feedback>(new List<Feedback>(), 1, 3, 0))
 </div>
 
 @section Scripts {
     <script>
         function loadPage(pageNumber) {
-            $.get('@Url.Action("FeedbackTable", "User")', { page: pageNumber }, function (data) {
+            $.get('@Url.Action("FeedbackTablePaged", "User")', { page: pageNumber }, function (data) {
                 $('#feedTableContainer').html(data);
             });
         }
