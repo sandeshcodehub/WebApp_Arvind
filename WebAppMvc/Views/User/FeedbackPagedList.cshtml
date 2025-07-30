@@ -2,10 +2,10 @@
 @using X.PagedList.Mvc.Core
 
 @{
-    ViewData["Title"] = "Feedback Paged List";
+    ViewData["Title"] = "Feedback X.PagedList Controller Based";
 }
 
-<h1>Feedback Paged List</h1>
+<h3>Feedback X.PagedList Example</h3>
 
 <table class="table table-bordered">
     <thead>
@@ -52,7 +52,7 @@
         PageClasses = new[] { "page-link" }
     })
 
-    <span>Default Paging Control</span>
+   @*  <span>Default Paging Control</span>
     @Html.PagedListPager(Model, page => Url.Action("FeedbackPagedList", new { page = page }), new PagedListRenderOptions
         { UlElementClasses = new[] { "pagination" },PageClasses = new[] { "page-link" }})
 
@@ -69,5 +69,5 @@
     @Html.PagedListPager(Model, page => Url.Action("FeedbackPagedList", new { page = page }), PagedListRenderOptions.PageNumbersOnly)
 
     <span>Only Show Five Pages At A Time</span>
-    @Html.PagedListPager(Model, page => Url.Action("FeedbackPagedList", new { page = page }), PagedListRenderOptions.OnlyShowFivePagesAtATime)
+    @Html.PagedListPager(Model, page => Url.Action("FeedbackPagedList", new { page = page }), PagedListRenderOptions.OnlyShowFivePagesAtATime) *@
 </div>

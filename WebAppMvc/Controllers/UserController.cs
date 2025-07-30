@@ -331,7 +331,7 @@ public class UserController : Controller
         //var products = _context.Feedbacks.OrderBy(p => p.Name);
         //var paginatedList = await PaginatedList<Feedback>.CreateAsync(products.AsNoTracking(), pageNumber, pageSize);
 
-        int pageSize = 1;
+        int pageSize = 3;
         var pageNumber = page ?? 1;        
         var pagedFeeds =  _context.Feedbacks.OrderBy(p => p.Name).ToPagedList(pageNumber, pageSize);
         return View(pagedFeeds);        

@@ -1,7 +1,12 @@
 ﻿@model X.PagedList.IPagedList<Feedback>
 @using X.PagedList.Mvc.Core
 <!-- Pagination Controls -->
-<div class="d-flex justify-content-center">
+
+
+@{
+    if (Model.Any())
+    {
+     <div class="d-flex justify-content-center">
     @Html.PagedListPager(Model, page => "#", new PagedListRenderOptions
     {
         DisplayLinkToFirstPage = PagedListDisplayMode.IfNeeded,
@@ -30,6 +35,7 @@
             <th>@Html.DisplayNameFor(m => m[0].Mobile)</th>
             <th>@Html.DisplayNameFor(m => m[0].Message)</th>
             <th>@Html.DisplayNameFor(m => m[0].Url)</th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
@@ -53,8 +59,21 @@
                         }
                     }
                 </td>
+                <td style="width:90px">
+                    <a href="#" class="btn btn-sm btn-warning edit-btn" data-id="@item.Id" title="Edit"><i class="bi bi-pencil-square"></i></a> 
+
+                    <a href="#" class="btn btn-sm btn-danger delete-btn" data-id="@item.Id" title="Delete"><i class="bi bi-trash"></i></a>
+                </td>
             </tr>
         }
     </tbody>
-</table>
+        </table>
+    }
+    else
+    {
+        <span>No Data</span>
+    }
+}
 
+
+ 
