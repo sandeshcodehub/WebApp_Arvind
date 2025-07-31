@@ -94,13 +94,14 @@
                          e.preventDefault();
                          var form = $('#addForm')[0];
                          var formData = new FormData(form);
-
+                         var token = $('input[name="__RequestVerificationToken"]').val();
                         if (!$(form).valid()) return;
 
                         $.ajax({
                             url: '/User/PostFeedback',
                             type: 'POST',
                             data: formData,
+                            headers: {'RequestVerificationToken': token},
                             processData: false,
                             contentType: false,
                             success: function (res) {
@@ -135,13 +136,14 @@
                          e.preventDefault();
                          var form = $('#editForm')[0];
                          var formData = new FormData(form);
-
+                          var token = $('input[name="__RequestVerificationToken"]').val();
                         if (!$(form).valid()) return;
 
                         $.ajax({
                             url: '/User/EditFeedback',
                             type: 'POST',
                             data: formData,
+                            headers: {'RequestVerificationToken': token},
                             processData: false,
                             contentType: false,
                             success: function (res) {
@@ -168,10 +170,12 @@
           $(document).on('click', '.delete-btn', function (e) {
                 e.preventDefault();
                 var id = $(this).data('id');
+                 var token = $('input[name="__RequestVerificationToken"]').val();
                 if (confirm('Are you sure you want to delete this record?')) {
                     $.ajax({
                         url: '/User/Delete/' + id,
                         type: 'Delete',
+                        headers: {'RequestVerificationToken': token},
                         success: function (result) {
                             // Optionally remove the row from the table
                             if(result.success){

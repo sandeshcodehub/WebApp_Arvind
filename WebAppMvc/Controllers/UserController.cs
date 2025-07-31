@@ -73,13 +73,19 @@ public class UserController : Controller
         }
         return View(feedback);
     }
-
-
     public IActionResult FeedbackTable()
     {
         return View();
     }
-
+    //-------X.PagedList Default-------
+    [HttpGet]
+    public async Task<IActionResult> FeedbackPagedList(int? page = 1)
+    {
+        int pageSize = 3;
+        var pageNumber = page ?? 1;
+        var pagedFeeds = _context.Feedbacks.OrderBy(p => p.Name).ToPagedList(pageNumber, pageSize);
+        return View(pagedFeeds);
+    }
     //Handle by Jquery/Ajax Operation...
 
     [AcceptVerbs("GET", "POST")]
@@ -99,43 +105,49 @@ public class UserController : Controller
 
     //Add New
     [HttpPost]
-    public async Task<ActionResult> PostFeedback(FeedbackAddDTO feedback)
+    [ValidateAntiForgeryToken]
+    public async Task<ActionResult> PostFeedback([FromForm] FeedbackAddDTO feedback)
     {
-        string url = "";
-        string finalpath = "";
-        if (feedback.Attachment != null)
+        if (ModelState.IsValid)
         {
-            string wwwRootPath = _webHostEnvironment.WebRootPath;
-            string uploadingFolder = _config["Uploading:UserDataUpload"]!;
-            string fileName = "Feedback_" + DateTime.Now.Ticks;
-            string extension = Path.GetExtension(feedback.Attachment.FileName);
-            url = fileName + extension;
-            finalpath = Path.Combine(wwwRootPath, uploadingFolder, url);
-            using (var fileStream = new FileStream(finalpath, FileMode.Create))
+
+            string url = "";
+            string finalpath = "";
+            if (feedback.Attachment != null)
             {
-                await feedback.Attachment.CopyToAsync(fileStream);
+                string wwwRootPath = _webHostEnvironment.WebRootPath;
+                string uploadingFolder = _config["Uploading:UserDataUpload"]!;
+                string fileName = "Feedback_" + DateTime.Now.Ticks;
+                string extension = Path.GetExtension(feedback.Attachment.FileName);
+                url = fileName + extension;
+                finalpath = Path.Combine(wwwRootPath, uploadingFolder, url);
+                using (var fileStream = new FileStream(finalpath, FileMode.Create))
+                {
+                    await feedback.Attachment.CopyToAsync(fileStream);
+                }
+            }
+            Feedback newFeedback = new Feedback()
+            {
+                Name = feedback.Name,
+                Email = feedback.Email,
+                Mobile = feedback.Mobile,
+                Message = feedback.Message,
+                Url = url,
+                RegisterDate = DateTime.Now
+            };
+
+            _context.Feedbacks.Add(newFeedback);
+            int i = await _context.SaveChangesAsync();
+            if (i > 0)
+            {
+                return Json(new { success = true, message = "Saved Successfully" });
+            }
+            else
+            {
+                return Json(new { success = false, message = "Failed." });
             }
         }
-        Feedback newFeedback = new Feedback()
-        {
-            Name = feedback.Name,
-            Email = feedback.Email,
-            Mobile = feedback.Mobile,
-            Message = feedback.Message,
-            Url = url,
-            RegisterDate = DateTime.Now
-        };
-
-        _context.Feedbacks.Add(newFeedback);
-        int i = await _context.SaveChangesAsync();
-        if (i > 0)
-        {
-            return Json(new { success = true, message = "Saved Successfully" });
-        }
-        else
-        {
-            return Json(new { success = false, message = "Failed." });
-        }
+        return Json(new { success = false, message = "Failed. Invalid Input..." });
     }
 
     //List
@@ -161,6 +173,7 @@ public class UserController : Controller
 
     //Update
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> EditFeedback(int id, FeedbackEditDTO feedback)
     {
         if (id != feedback.Id)
@@ -237,6 +250,7 @@ public class UserController : Controller
 
     //Delete
     [HttpDelete]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(int id)
     {
         var feedback = await _context.Feedbacks.FindAsync(id);
@@ -313,30 +327,7 @@ public class UserController : Controller
             recordsTotal = recordsTotal,
             data = data
         });
-    }
-    //-------Paginated List-------
-    [HttpGet]
-    public async Task<IActionResult> FeedbackPagedList(int? page=1)
-    {
-        //var feedbacks = await _context.Feedbacks
-        //    .OrderByDescending(f => f.RegisterDate)
-        //    .Skip((pageNumber - 1) * pageSize)
-        //    .Take(pageSize)
-        //    .ToListAsync();
-        //var totalCount = await _context.Feedbacks.CountAsync();
-        //var paginatedList = new PaginatedList<Feedback>(feedbacks, totalCount, pageNumber, pageSize);
-
-
-        //int pageSize = 10;
-        //var products = _context.Feedbacks.OrderBy(p => p.Name);
-        //var paginatedList = await PaginatedList<Feedback>.CreateAsync(products.AsNoTracking(), pageNumber, pageSize);
-
-        int pageSize = 3;
-        var pageNumber = page ?? 1;        
-        var pagedFeeds =  _context.Feedbacks.OrderBy(p => p.Name).ToPagedList(pageNumber, pageSize);
-        return View(pagedFeeds);        
-
-    }
+    }   
 
     // AJAX endpoint for partial pagination
     [HttpGet]

@@ -1,5 +1,6 @@
 ﻿@model FeedbackAddDTO
 <form asp-action="PostFeedback" enctype="multipart/form-data" method="post" id="addForm" >
+    @Html.AntiForgeryToken()
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <div class="form-group mb-3">
         <label asp-for="Name" class="control-label"></label>

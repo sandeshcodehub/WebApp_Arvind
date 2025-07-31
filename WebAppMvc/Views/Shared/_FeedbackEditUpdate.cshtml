@@ -1,5 +1,6 @@
 ﻿@model FeedbackEditDTO
 <form asp-action="EditFeedback" enctype="multipart/form-data" id="editForm" asp-controller="User">
+    @Html.AntiForgeryToken()
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <input type="hidden" asp-for="Id" />
     <div class="form-group mb-3">
