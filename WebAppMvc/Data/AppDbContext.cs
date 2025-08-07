@@ -11,5 +11,7 @@ namespace WebAppMvc.Data
         {
         }
         public DbSet<Feedback> Feedbacks { get; set; }
+        public DbSet<Album> Albums { get; set; }
+        public DbSet<Photo> Photos { get; set; }
     }
 }

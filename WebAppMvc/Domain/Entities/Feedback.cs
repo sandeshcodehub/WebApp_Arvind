@@ -6,7 +6,7 @@ namespace WebAppMvc.Domain.Entities
     {
         [Key]
         public int Id { get; set; }
-        [Required,StringLength(100)]
+        [Required, StringLength(100)]
         public string Name { get; set; }
         [Required, StringLength(50)]
         public string Email { get; set; }
@@ -16,6 +16,9 @@ namespace WebAppMvc.Domain.Entities
         public string Message { get; set; }
         [StringLength(100)]
         public string? Url { get; set; }
-        public DateTime RegisterDate { get; set; }=DateTime.Now;
+        public DateTime RegisterDate { get; set; } = DateTime.Now;
     }
+
+
+    
 }
