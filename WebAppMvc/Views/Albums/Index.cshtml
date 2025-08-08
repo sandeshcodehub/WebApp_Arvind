@@ -1,5 +1,5 @@
-﻿@model IEnumerable<WebAppMvc.Domain.Entities.Album>
-
+﻿@model IEnumerable<AlbumViewDTO>
+@inject IConfiguration config
 @{
     ViewData["Title"] = "Index";
 }
@@ -21,27 +21,35 @@
             <th>
                 @Html.DisplayNameFor(model => model.CreatedOn)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CoverImageUrl)
+            </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedOn)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreatedOn)
+                </td>
+                <td>
+                    <img src="~/@config["Uploading:PhotoUpload"]/@item.CoverImageUrl" alt="@item.Title" style="max-width: 100px; max-height: 100px;" />
+                </td>
+                <td>
+                    <a asp-action="PhotoGallery" asp-route-id="@item.Id">View</a> @* |
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a> *@
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

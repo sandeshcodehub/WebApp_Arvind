@@ -9,7 +9,30 @@
 <p>
     <a asp-action="AddPhoto">Add New</a>
 </p>
-<table class="table">
+
+<div class="row">
+
+    @foreach (var item in Model)
+    {
+        <div class="col-md-2 mb-3">
+            @* <img src="~/@config["Uploading:PhotoUpload"]/@item.ImageUrl" alt="@item.Title" class="img img-fluid" style="max-height: 100px;" /> *@
+            <picture>
+                <source srcset="~/@config["Uploading:PhotoUpload"]/@item.ImageUrl" type="image/jpeg">
+                <img src="~/@config["Uploading:PhotoUpload"]/@item.ImageUrl" class="img-fluid img-thumbnail" alt="@item.Title">
+            </picture>
+        </div>
+    }
+
+</div>
+
+
+
+
+@*    <img src="~/@config["Uploading:PhotoUpload"]/@item.ImageUrl" alt="@item.Title" style="max-width: 100px; max-height: 100px;" /> 
+            @Html.DisplayFor(modelItem => item.Title)*@
+
+
+@* <table class="table">
     <thead>
         <tr>
             <th>
@@ -37,36 +60,37 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-          @*       @Html.DisplayFor(modelItem => item.ImageUrl) *@
-                    <img src="~/@config["Uploading:PhotoUpload"]/@item.ImageUrl" alt="@item.Title" style="max-width: 100px; max-height: 100px;" />
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Tags)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedOn)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UpdateOn)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Album.Title)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                 
+<img src="~/@config["Uploading:PhotoUpload"]/@item.ImageUrl" alt="@item.Title" style="max-width: 100px; max-height: 100px;" />
+</td>
+<td>
+    @Html.DisplayFor(modelItem => item.Tags)
+</td>
+<td>
+    @Html.DisplayFor(modelItem => item.CreatedOn)
+</td>
+<td>
+    @Html.DisplayFor(modelItem => item.UpdateOn)
+</td>
+<td>
+    @Html.DisplayFor(modelItem => item.Album.Title)
+</td>
+<td>
+    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+</td>
+</tr>
+        }
+</tbody>
+</table> *@

@@ -26,9 +26,25 @@ namespace WebAppMvc.Controllers
         }
 
         // GET: Albums
+        //public async Task<IActionResult> Index()
+        //{
+        //    return View(await _context.Albums.ToListAsync());
+        //}
+        // GET: Albums
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Albums.ToListAsync());
+            var albums = await _context.Albums
+                .Select(a => new AlbumViewDTO
+                {
+                    Id = a.Id,
+                    Title = a.Title,
+                    Description = a.Description,
+                    CreatedOn = a.CreatedOn,
+                    CoverImageUrl = _context.Photos.Where(p => p.AlbumId == a.Id).FirstOrDefault()!.ImageUrl
+                })
+                .ToListAsync();
+
+            return View(albums);
         }
 
         // GET: Albums/Details/5
