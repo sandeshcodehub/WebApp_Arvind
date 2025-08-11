@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 using WebAppMvc.Data;
 using WebAppMvc.Domain.Entities;
 using WebAppMvc.Models.DTOs;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using static System.Net.Mime.MediaTypeNames;
+
 
 namespace WebAppMvc.Controllers
 {
@@ -147,8 +148,7 @@ namespace WebAppMvc.Controllers
                 return NotFound();
             }
 
-            var album = await _context.Albums
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var album = await _context.Albums.FirstOrDefaultAsync(m => m.Id == id);
             if (album == null)
             {
                 return NotFound();
@@ -165,6 +165,21 @@ namespace WebAppMvc.Controllers
             var album = await _context.Albums.FindAsync(id);
             if (album != null)
             {
+
+               var photos = _context.Photos.Where(p => p.AlbumId == id).ToList();
+
+                foreach (var photo in photos)
+                {
+                    string wwwRootPath = _webHostEnvironment.WebRootPath;
+                    string uploadingFolder = _config["Uploading:PhotoUpload"]!;
+                    var filePath = Path.Combine(wwwRootPath, uploadingFolder, photo.ImageUrl);
+                    if (System.IO.File.Exists(filePath))
+                    {
+                        System.IO.File.Delete(filePath);
+                    }
+                    _context.Photos.Remove(photo);
+                }  
+
                 _context.Albums.Remove(album);
             }
 
@@ -194,53 +209,67 @@ namespace WebAppMvc.Controllers
         public async Task<IActionResult> AddPhoto([Bind("AlbumId,Title,Description,Attachment,Tags")] AddPhotoDTO objEnt)
         {
             List<SelectListItem> AlbumList = _context.Albums.Select(a => new SelectListItem { Value = a.Id.ToString(), Text = a.Title }).ToList();
-            ViewBag.AlbumList = AlbumList; // Pass the list to the view using ViewBag 
+            ViewBag.AlbumList = AlbumList; // Pass the list to the view using ViewBag
+
+            if (objEnt.Attachment == null || objEnt.Attachment.Count == 0)
+            {
+                ModelState.AddModelError("", "Please select at least one image.");
+                return View();
+            }
+
             if (ModelState.IsValid)
             {
                 string url = "";
                 string finalpath = "";
                 var CreatedOn = DateTime.UtcNow.AddHours(5).AddMinutes(30); // Set CreatedOn to current time
-                if (objEnt.Attachment != null)
+                string wwwRootPath = _webHostEnvironment.WebRootPath;
+                string uploadingFolder = _config["Uploading:PhotoUpload"]!;
+                //if (objEnt.Attachment != null)
                 {
 
-                    string wwwRootPath = _webHostEnvironment.WebRootPath;
-                    string uploadingFolder = _config["Uploading:PhotoUpload"]!;
-                    string fileName = "Photo_" + DateTime.Now.Ticks;
-                    string extension = Path.GetExtension(objEnt.Attachment.FileName);
-                    url = fileName + extension;
-
-                    finalpath = Path.Combine(wwwRootPath, uploadingFolder, url);
-
-                    using (var fileStream = new FileStream(finalpath, FileMode.Create))
+                    foreach (var file in objEnt.Attachment)
                     {
-                        await objEnt.Attachment.CopyToAsync(fileStream);
-                    }
-                    if(System.IO.File.Exists(finalpath))
-                    {
-                        // File successfully uploaded
-                        Photo photo = new Photo
+
+
+                        string fileName = "Photo_" + DateTime.Now.Ticks;
+                        string extension = Path.GetExtension(file.FileName);
+                        url = fileName + extension;
+
+                        finalpath = Path.Combine(wwwRootPath, uploadingFolder, url);
+
+                        using (var fileStream = new FileStream(finalpath, FileMode.Create))
                         {
-                            Title = objEnt.Title,
-                            Description = objEnt.Description,
-                            Tags = objEnt.Tags,
-                            CreatedOn = CreatedOn,
-                            ImageUrl = url,
-                            AlbumId = objEnt.AlbumId
-                        };
+                            await file.CopyToAsync(fileStream);
+                        }
+                        if (System.IO.File.Exists(finalpath))
+                        {
+                            // File successfully uploaded
+                            Photo photo = new Photo
+                            {
+                                Title = objEnt.Title,
+                                Description = objEnt.Description,
+                                Tags = objEnt.Tags,
+                                CreatedOn = CreatedOn,
+                                ImageUrl = url,
+                                AlbumId = objEnt.AlbumId
+                            };
 
-                        _context.Photos.Add(photo);
-                        await _context.SaveChangesAsync();
-                        TempData["msg"] = "Photo added successfully!";
-                        return RedirectToAction(nameof(PhotoGallery),new { id= objEnt.AlbumId });
-                        //return RedirectToAction(nameof(Index));
+                            _context.Photos.Add(photo);
+                            await _context.SaveChangesAsync();
+                            //TempData["msg"] = "Photo added successfully!";
+                            //return RedirectToAction(nameof(PhotoGallery), new { id = objEnt.AlbumId });
+                            //return RedirectToAction(nameof(Index));
+
+                        }
+                        else
+                        {
+                            // Handle file upload failure
+                            TempData["msg"] = "Error: File upload failed!";
+                            return View(objEnt);
+                        }
                     }
-                    else
-                    {
-                        // Handle file upload failure
-                        TempData["msg"] = "Error: File upload failed!";
-                        return View(objEnt);
-                    }
-                    
+                    TempData["msg"] = "Photo added successfully!";
+                    return RedirectToAction(nameof(PhotoGallery), new { id = objEnt.AlbumId });
                 }
             }
             

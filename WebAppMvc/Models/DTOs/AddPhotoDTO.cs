@@ -22,6 +22,6 @@ namespace WebAppMvc.Models.DTOs
 
         [Required]
         [NotMapped]
-        public IFormFile? Attachment { get; set; }
+        public List<IFormFile>? Attachment { get; set; }
     }
 }
