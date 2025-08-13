@@ -7,29 +7,35 @@
 <h1> @ViewData["Title"]</h1>
 
 <p>
-    <a asp-action="AddPhoto">Add New</a>
+    <a asp-action="AddPhoto">Add New</a>  |   <a asp-action="Index">Albums</a>
 </p>
 
 <div class="row">
-
+    @{
+        var albumid = Context.Request.RouteValues["id"]?.ToString();
+    }
     @foreach (var item in Model)
     {
-        <div class="col-md-2 mb-3">
-            @* <img src="~/@config["Uploading:PhotoUpload"]/@item.ImageUrl" alt="@item.Title" class="img img-fluid" style="max-height: 100px;" /> *@
-            <picture>
-                <source srcset="~/@config["Uploading:PhotoUpload"]/@item.ImageUrl" type="image/jpeg">
-                <img src="~/@config["Uploading:PhotoUpload"]/@item.ImageUrl" class="img-fluid img-thumbnail" alt="@item.Title">
-            </picture>
+        <div class="col-md-3 mb-2">
+            <div class="card shadow-sm" style="max-height: 170px;">
+                <div class="card-body text-center">
+                    <img src="~/@config["Uploading:PhotoUpload"]/@item.ImageUrl" class="img img-fluid rounded-3" style="max-height: 100px;" alt="@item.Title"><br />
+                    <span class="text-muted" style="font-size:10px">@item.Title</span>
+                    @if (User.Identity!.IsAuthenticated)
+                    {
+                    <br />
+                    <form asp-action="PhotoDelete">
+                        <input type="hidden" name="albumid" value="@albumid" />
+                        <input type="hidden" name="id" value="@item.Id" />
+                        @Html.AntiForgeryToken()
+                        <input type="submit" value="x" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure to delete it?')" />
+                    </form> 
+                    }
+                </div>
+            </div>
         </div>
     }
-
 </div>
-
-
-
-
-@*    <img src="~/@config["Uploading:PhotoUpload"]/@item.ImageUrl" alt="@item.Title" style="max-width: 100px; max-height: 100px;" /> 
-            @Html.DisplayFor(modelItem => item.Title)*@
 
 
 @* <table class="table">

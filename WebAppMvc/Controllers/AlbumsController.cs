@@ -166,7 +166,7 @@ namespace WebAppMvc.Controllers
             if (album != null)
             {
 
-               var photos = _context.Photos.Where(p => p.AlbumId == id).ToList();
+                var photos = _context.Photos.Where(p => p.AlbumId == id).ToList();
 
                 foreach (var photo in photos)
                 {
@@ -178,7 +178,7 @@ namespace WebAppMvc.Controllers
                         System.IO.File.Delete(filePath);
                     }
                     _context.Photos.Remove(photo);
-                }  
+                }
 
                 _context.Albums.Remove(album);
             }
@@ -196,7 +196,7 @@ namespace WebAppMvc.Controllers
 
         // GET: Albums/AddPhoto
         public IActionResult AddPhoto()
-        {          
+        {
             List<SelectListItem> AlbumList = _context.Albums.Select(a => new SelectListItem { Value = a.Id.ToString(), Text = a.Title }).ToList();
             ViewBag.AlbumList = AlbumList; // Pass the list to the view using ViewBag
             return View();
@@ -272,7 +272,7 @@ namespace WebAppMvc.Controllers
                     return RedirectToAction(nameof(PhotoGallery), new { id = objEnt.AlbumId });
                 }
             }
-            
+
             return View();
         }
 
@@ -280,13 +280,40 @@ namespace WebAppMvc.Controllers
         // GET: Albums/PhotoGallery/5
         public IActionResult PhotoGallery(int? id)
         {
-             List<Photo> Photos = _context.Photos.ToList();
-            if (id != null)
+            List<Photo> Photos = _context.Photos.ToList();
+            if (id != null || id==0)
             {
-               Photos= Photos.Where(p => p.AlbumId == id).ToList();
+                Photos = Photos.Where(p => p.AlbumId == id).ToList();
             }
-            
+
             return View(Photos);
+        }
+
+        // POST: Albums/PhotoDelete/5/4
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> PhotoDelete(int id,int? albumid)
+        {
+
+            if (id != 0)
+            {
+                var photo = await _context.Photos.FindAsync(id);
+                if (photo == null)
+                {
+                    return NotFound();
+                }
+                string wwwRootPath = _webHostEnvironment.WebRootPath;
+                string uploadingFolder = _config["Uploading:PhotoUpload"]!;
+                var filePath = Path.Combine(wwwRootPath, uploadingFolder, photo!.ImageUrl);
+                if (System.IO.File.Exists(filePath))
+                {
+                    System.IO.File.Delete(filePath);
+                }
+                _context.Photos.Remove(photo);
+                await _context.SaveChangesAsync();
+
+            }            
+            return RedirectToAction(nameof(PhotoGallery), new { id= albumid });
         }
 
     }
