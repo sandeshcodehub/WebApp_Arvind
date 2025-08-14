@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using WebAppMvc.Data;
 using WebAppMvc.Domain.Entities;
 using WebAppMvc.Models.DTOs;
+using X.PagedList.Extensions;
 using static System.Net.Mime.MediaTypeNames;
 
 
@@ -278,21 +279,45 @@ namespace WebAppMvc.Controllers
 
 
         // GET: Albums/PhotoGallery/5
-        public IActionResult PhotoGallery(int? id)
-        {
-            List<Photo> Photos = _context.Photos.ToList();
-            if (id != null || id==0)
-            {
-                Photos = Photos.Where(p => p.AlbumId == id).ToList();
-            }
+        //public IActionResult PhotoGallery(int? id)
+        //{
+        //    List<Photo> Photos = _context.Photos.ToList();
+        //    ViewBag.AlbumTitle = "ALL Album"; // Initialize ViewBag.AlbumTitle
+        //    if (id != null || id==0)
+        //    {
+        //        Photos = Photos.Where(p => p.AlbumId == id).ToList();
+        //        string albumTitle = _context.Albums.Where(a => a.Id == id).Select(a => a.Title).FirstOrDefault()!;
+        //        ViewBag.AlbumTitle = albumTitle; // Pass the album title to the view using ViewBag
+        //    }
 
-            return View(Photos);
+        //    return View(Photos);
+        //}
+
+
+        public IActionResult PhotoGallery(int? id, int? page = 1)
+        {   
+            ViewBag.AlbumTitle = "ALL Album";
+            int pageSize = 8;
+            var pageNumber = page ?? 1;
+
+           var pagedPhoto = _context.Photos.OrderBy(x=>x.Id).ToPagedList(pageNumber, pageSize);
+
+            if (id != null || id == 0)
+            { 
+                string albumTitle = _context.Albums.Where(a => a.Id == id).Select(a => a.Title).FirstOrDefault()!;
+                ViewBag.AlbumTitle = albumTitle;
+               
+                pagedPhoto = _context.Photos.Where(p => p.AlbumId == id).OrderBy(x => x.Id).ToPagedList(pageNumber, pageSize);               
+            }  
+            return View(pagedPhoto);
         }
+
+
 
         // POST: Albums/PhotoDelete/5/4
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> PhotoDelete(int id,int? albumid)
+        public async Task<IActionResult> PhotoDelete(int id, int? albumid)
         {
 
             if (id != 0)
@@ -312,8 +337,8 @@ namespace WebAppMvc.Controllers
                 _context.Photos.Remove(photo);
                 await _context.SaveChangesAsync();
 
-            }            
-            return RedirectToAction(nameof(PhotoGallery), new { id= albumid });
+            }
+            return RedirectToAction(nameof(PhotoGallery), new { id = albumid });
         }
 
     }

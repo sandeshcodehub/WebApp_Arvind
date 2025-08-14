@@ -1,102 +1,70 @@
-﻿@model IEnumerable<WebAppMvc.Domain.Entities.Photo>
+﻿@* @model IEnumerable<Photo> *@
+@model X.PagedList.IPagedList<Photo>
+@using X.PagedList.Mvc.Core
 @inject IConfiguration config
 @{
     ViewData["Title"] = "Photo Gallery";
 }
-
-<h1> @ViewData["Title"]</h1>
+<style>
+    .float-end {
+        position: relative !important;
+        float: right !important;
+        top: -9px !important;
+        right: -9px !important;
+    }
+</style>
+<h1> @ViewData["Title"] : @ViewData["AlbumTitle"]</h1>
 
 <p>
-    <a asp-action="AddPhoto">Add New</a>  |   <a asp-action="Index">Albums</a>
+    <a asp-action="AddPhoto">Add New</a> | <a asp-action="Index">Albums</a>
 </p>
 
 <div class="row">
     @{
-        var albumid = Context.Request.RouteValues["id"]?.ToString();
-    }
-    @foreach (var item in Model)
-    {
-        <div class="col-md-3 mb-2">
-            <div class="card shadow-sm" style="max-height: 170px;">
-                <div class="card-body text-center">
-                    <img src="~/@config["Uploading:PhotoUpload"]/@item.ImageUrl" class="img img-fluid rounded-3" style="max-height: 100px;" alt="@item.Title"><br />
-                    <span class="text-muted" style="font-size:10px">@item.Title</span>
-                    @if (User.Identity!.IsAuthenticated)
-                    {
-                    <br />
-                    <form asp-action="PhotoDelete">
-                        <input type="hidden" name="albumid" value="@albumid" />
-                        <input type="hidden" name="id" value="@item.Id" />
-                        @Html.AntiForgeryToken()
-                        <input type="submit" value="x" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure to delete it?')" />
-                    </form> 
-                    }
+        var id = Context.Request.RouteValues["id"]?.ToString();
+        foreach (var item in Model)
+        {
+            <div class="col-md-3 mb-2">
+                <div class="card shadow-sm" style="max-height: 170px;">
+                    <div class="card-body text-center p-2">
+                        @if (User.Identity!.IsAuthenticated)
+                        {
+                            <form asp-action="PhotoDelete">
+                                <input type="hidden" name="albumid" value="@id" />
+                                <input type="hidden" name="id" value="@item.Id" />
+                                @Html.AntiForgeryToken()
+                                <input type="submit" value="X" class="btn btn-sm btn-danger px-2 py-0 float-end" onclick="return confirm('Are you sure to delete it?')" />
+                            </form>
+                        }
+                        <img src="~/@config["Uploading:PhotoUpload"]/@item.ImageUrl" class="img img-fluid rounded-3" style="max-height: 100px;" alt="@item.Title"><br />
+                        <span class="text-muted" style="font-size:10px">@item.Title</span>
+                 
+                    </div>
                 </div>
             </div>
-        </div>
+        }
     }
 </div>
-
-
-@* <table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ImageUrl)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Tags)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedOn)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UpdateOn)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Album)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Title)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Description)
-                </td>
-                <td>
-                 
-<img src="~/@config["Uploading:PhotoUpload"]/@item.ImageUrl" alt="@item.Title" style="max-width: 100px; max-height: 100px;" />
-</td>
-<td>
-    @Html.DisplayFor(modelItem => item.Tags)
-</td>
-<td>
-    @Html.DisplayFor(modelItem => item.CreatedOn)
-</td>
-<td>
-    @Html.DisplayFor(modelItem => item.UpdateOn)
-</td>
-<td>
-    @Html.DisplayFor(modelItem => item.Album.Title)
-</td>
-<td>
-    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-</td>
-</tr>
-        }
-</tbody>
-</table> *@
+<div class="row">
+    <div class="col-md-12">
+        <!-- Pagination Controls -->
+        <div class="text-center">
+            @Html.PagedListPager(Model, page => Url.Action("PhotoGallery", new { page,id }),
+            new PagedListRenderOptions
+            {
+                DisplayLinkToFirstPage = PagedListDisplayMode.IfNeeded,
+                DisplayLinkToLastPage = PagedListDisplayMode.IfNeeded,
+                DisplayLinkToPreviousPage = PagedListDisplayMode.IfNeeded,
+                DisplayLinkToNextPage = PagedListDisplayMode.IfNeeded,
+                DisplayLinkToIndividualPages = true,
+                MaximumPageNumbersToDisplay = 5,
+                ClassToApplyToFirstListItemInPager = "page-item",
+                ClassToApplyToLastListItemInPager = "page-item",
+                LinkToPreviousPageFormat = "«",
+                LinkToNextPageFormat = "»",
+                UlElementClasses = new[] { "pagination" },
+                PageClasses = new[] { "page-link" }
+            })
+        </div>
+    </div>
+</div>
