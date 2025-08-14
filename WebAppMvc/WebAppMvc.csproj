@@ -22,8 +22,8 @@
 	<ItemGroup>
 	  <Folder Include="Areas\Secure\Data\" />
 	  <Folder Include="Areas\Secure\Models\" />
-	  <Folder Include="wwwroot\PhotoGallery\" />
 	  <Folder Include="wwwroot\Uploads\" />
+	  <Folder Include="wwwroot\PhotoGallery\" />
 	</ItemGroup>
 
 </Project>
