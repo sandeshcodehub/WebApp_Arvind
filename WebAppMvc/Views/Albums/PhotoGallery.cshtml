@@ -24,12 +24,13 @@
         <label class="form-check-label" for="checkAll">
             Select All
         </label>
+        <input type="button" id="btnDelete" value="Delete" class="btn btn-danger btn-sm d-none" />
     </div>
 </div>
 <div class="row">
     @{
         var id = Context.Request.RouteValues["id"]?.ToString();
-        
+
         foreach (var item in Model)
         {
             <div class="col-md-3 mb-2">
@@ -51,7 +52,7 @@
                 </div>
             </div>
         }
-       
+
     }
 </div>
 <div class="row">
@@ -80,22 +81,64 @@
 @section Scripts {
 
     <script>
-        // When "Select All" checkbox is clicked
-        $("#checkAll").click(function () {
-            $(".cbPhoto").prop("checked", this.checked);
+           // When "Select All" checkbox is clicked
+           $("#checkAll").click(function () {
+               $(".cbPhoto").prop("checked", this.checked);
+               if(this.checked){
+                    $("#btnDelete").removeClass("d-none").addClass("d-inline");
+               }else{
+                    $("#btnDelete").removeClass("d-inline").addClass("d-none");
+               }
+           });
+
+           // If any item checkbox is unchecked, uncheck "Select All"
+           $(".cbPhoto").click(function () {
+               if (!$(this).prop("checked")) {
+                   $("#checkAll").prop("checked", false);
+               }
+
+               // If all checkboxes are checked, check "Select All"
+               if ($(".cbPhoto:checked").length === $(".cbPhoto").length) {
+                   $("#checkAll").prop("checked", true);
+               }
+
+               if ($(".cbPhoto:checked").length===0) {
+                   $("#btnDelete").removeClass("d-inline").addClass("d-none");
+               }else{
+                   $("#btnDelete").removeClass("d-none").addClass("d-inline");
+               }
+           });
+
+        $(document).on("click","#btnDelete",function(){
+            var confirm= window.confirm('Are you sure to delete it?');
+            if(confirm){
+                    console.info('btnDelete Yes Call');
+                    var selectedIds = [];
+                    $(".cbPhoto:checked").each(function () {
+                    selectedIds.push($(this).val());           
+                    });
+
+                    // Debug
+                    //console.log("Selected IDs:", selectedIds);
+                    //-------------//
+                    $.ajax({
+                    url: '/Albums/DeleteSelectedPhoto',   // Controller Action
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(selectedIds),
+                    success: function (response) {
+                        alert(response.message);
+                        //console.info(response);
+                        window.location.reload();
+                    },
+                    error: function (xhr) {
+                        alert("Error: " + xhr.responseText);
+                    }
+                    });
+                    //------------//
+                    }
         });
 
-        // If any item checkbox is unchecked, uncheck "Select All"
-        $(".cbPhoto").click(function () {
-            if (!$(this).prop("checked")) {
-                $("#checkAll").prop("checked", false);
-            }
-
-            // If all checkboxes are checked, check "Select All"
-            if ($(".cbPhoto:checked").length === $(".cbPhoto").length) {
-                $("#checkAll").prop("checked", true);
-            }
-        });
 
     </script>
 }

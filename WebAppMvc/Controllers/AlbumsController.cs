@@ -341,7 +341,37 @@ namespace WebAppMvc.Controllers
             }
             return RedirectToAction(nameof(PhotoGallery), new { id = albumid });
         }
-        
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteSelectedPhoto([FromBody] List<int> selectedIds)
+        {
+            if (selectedIds == null || !selectedIds.Any())
+            {
+                return BadRequest("No items selected.");
+            }
+
+            // Example: Save to database
+            foreach (var id in selectedIds)
+            {
+                var photo = await _context.Photos.FindAsync(id);
+                if (photo == null)
+                {
+                    return NotFound();
+                }
+                string wwwRootPath = _webHostEnvironment.WebRootPath;
+                string uploadingFolder = _config["Uploading:PhotoUpload"]!;
+                var filePath = Path.Combine(wwwRootPath, uploadingFolder, photo!.ImageUrl);
+                if (System.IO.File.Exists(filePath))
+                {
+                    System.IO.File.Delete(filePath);
+                }
+                _context.Photos.Remove(photo); 
+                 await _context.SaveChangesAsync();
+            }
+           
+            return Ok(new { message = "Photo deteled successfully", count = selectedIds.Count });
+        }
+
 
     }
 }
