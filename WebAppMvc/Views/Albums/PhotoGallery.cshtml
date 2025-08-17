@@ -5,9 +5,7 @@
 @{
     ViewData["Title"] = "Photo Gallery";
 }
-<style>
-    <link rel="stylesheet" href="~/vendors/zoomify/zoomify.css" />
-       
+<style>  
         .float-end {
             position: relative !important;
             float: right !important;
@@ -70,16 +68,8 @@
         </div>
     </div>
 </div>
-@section Scripts {
-    <script src="~/vendors/zoomify/zoomify.js"></script>
+@section Scripts {   
     <script>
-        $(document).ready(function () {
-            $('.img').zoomify({
-                zoomFactor: 2,
-                transitionDuration: 300,
-                enableZoomOnClick: true,
-                enableZoomOnHover: false
-            });
-                });
+       
     </script>
 }

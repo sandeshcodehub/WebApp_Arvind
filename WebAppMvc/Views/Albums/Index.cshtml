@@ -1,55 +1,28 @@
 ﻿@model IEnumerable<AlbumViewDTO>
 @inject IConfiguration config
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Album Index";
 }
 
-<h1>Index</h1>
+<h1>@ViewData["Title"]</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">New Album</a>
 </p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedOn)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CoverImageUrl)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
+<div class="row">
         @foreach (var item in Model)
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Title)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Description)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CreatedOn)
-                </td>
-                <td>
-                    <img src="~/@config["Uploading:PhotoUpload"]/@item.CoverImageUrl" alt="@item.Title" style="max-width: 100px; max-height: 100px;" />
-                </td>
-                <td>
-                    <a asp-action="PhotoGallery" asp-route-id="@item.Id">View</a> | <a asp-action="Delete" asp-route-id="@item.Id">Delete</a> 
-                    @* |
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a>  *@
-                </td>
-            </tr>
+            <div class="col-md-3">
+                
+                    <img src="~/@config["Uploading:PhotoUpload"]/@item.CoverImageUrl" alt="@item.Title" style="max-width: 100px; max-height: 100px;" /><br />
+                    @Html.DisplayFor(modelItem => item.Title)&nbsp;
+                    @Html.DisplayFor(modelItem => item.Description)<br />
+                    @Html.DisplayFor(modelItem => item.CreatedOn)<br />
+                    Total Photos: @Html.DisplayFor(modelItem => item.TotalPhotos)<br />
+            <a asp-action="PhotoGallery" asp-route-id="@item.Id"><i class="bi bi-journal-album"></i></a> | <a asp-action="Delete" asp-route-id="@item.Id"><i class="bi bi-trash text-danger"></i></a>
+              
+
+            </div>
         }
-    </tbody>
-</table>
+   
+</div>

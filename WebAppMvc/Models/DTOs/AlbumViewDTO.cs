@@ -9,5 +9,6 @@ namespace WebAppMvc.Models.DTOs
         public string? Description { get; set; }
         public string? CoverImageUrl { get; set; }
         public DateTime CreatedOn { get; set; }
+        public int TotalPhotos { get; set; }
     }
 }

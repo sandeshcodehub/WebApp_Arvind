@@ -42,7 +42,8 @@ namespace WebAppMvc.Controllers
                     Title = a.Title,
                     Description = a.Description,
                     CreatedOn = a.CreatedOn,
-                    CoverImageUrl = _context.Photos.Where(p => p.AlbumId == a.Id).FirstOrDefault()!.ImageUrl
+                    CoverImageUrl = _context.Photos.Where(p => p.AlbumId == a.Id).FirstOrDefault()!.ImageUrl,
+                    TotalPhotos= _context.Photos.Where(p => p.AlbumId == a.Id).Count()
                 })
                 .ToListAsync();
 
