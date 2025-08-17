@@ -5,23 +5,31 @@
 @{
     ViewData["Title"] = "Photo Gallery";
 }
-<style>  
-        .float-end {
-            position: relative !important;
-            float: right !important;
-            top: -9px !important;
-            right: -9px !important;
-        }
+<style>
+    .float-end {
+        position: relative !important;
+        float: right !important;
+        top: -9px !important;
+        right: -9px !important;
+    }
 </style>
 <h1> @ViewData["Title"] : @ViewData["AlbumTitle"]</h1>
 
 <p>
     <a asp-action="AddPhoto">Add New</a> | <a asp-action="Index">Albums</a>
 </p>
-
+<div>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="" id="checkAll">
+        <label class="form-check-label" for="checkAll">
+            Select All
+        </label>
+    </div>
+</div>
 <div class="row">
     @{
         var id = Context.Request.RouteValues["id"]?.ToString();
+        
         foreach (var item in Model)
         {
             <div class="col-md-3 mb-2">
@@ -38,11 +46,12 @@
                         }
                         <img src="~/@config["Uploading:PhotoUpload"]/@item.ImageUrl" class="img img-fluid rounded-3" style="max-height: 100px;" alt="@item.Title"><br />
                         <span class="text-muted" style="font-size:10px">@item.Title</span>
-                 
+                        <input class="form-check-input cbPhoto" name="checkboxItem" type="checkbox" value="@item.Id" id="checkboxItem">
                     </div>
                 </div>
             </div>
         }
+       
     }
 </div>
 <div class="row">
@@ -68,8 +77,25 @@
         </div>
     </div>
 </div>
-@section Scripts {   
+@section Scripts {
+
     <script>
-       
+        // When "Select All" checkbox is clicked
+        $("#checkAll").click(function () {
+            $(".cbPhoto").prop("checked", this.checked);
+        });
+
+        // If any item checkbox is unchecked, uncheck "Select All"
+        $(".cbPhoto").click(function () {
+            if (!$(this).prop("checked")) {
+                $("#checkAll").prop("checked", false);
+            }
+
+            // If all checkboxes are checked, check "Select All"
+            if ($(".cbPhoto:checked").length === $(".cbPhoto").length) {
+                $("#checkAll").prop("checked", true);
+            }
+        });
+
     </script>
 }

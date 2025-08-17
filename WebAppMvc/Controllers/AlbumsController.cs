@@ -341,6 +341,7 @@ namespace WebAppMvc.Controllers
             }
             return RedirectToAction(nameof(PhotoGallery), new { id = albumid });
         }
+        
 
     }
 }
