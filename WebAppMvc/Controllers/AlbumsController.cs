@@ -43,7 +43,7 @@ namespace WebAppMvc.Controllers
                     Description = a.Description,
                     CreatedOn = a.CreatedOn,
                     CoverImageUrl = _context.Photos.Where(p => p.AlbumId == a.Id).FirstOrDefault()!.ImageUrl,
-                    TotalPhotos= _context.Photos.Where(p => p.AlbumId == a.Id).Count()
+                    TotalPhotos = _context.Photos.Where(p => p.AlbumId == a.Id).Count()
                 })
                 .ToListAsync();
 
@@ -296,20 +296,20 @@ namespace WebAppMvc.Controllers
 
 
         public IActionResult PhotoGallery(int? id, int? page = 1)
-        {   
+        {
             ViewBag.AlbumTitle = "ALL Album";
             int pageSize = 8;
             var pageNumber = page ?? 1;
 
-           var pagedPhoto = _context.Photos.OrderBy(x=>x.Id).ToPagedList(pageNumber, pageSize);
+            var pagedPhoto = _context.Photos.OrderBy(x => x.Id).ToPagedList(pageNumber, pageSize);
 
             if (id != null || id == 0)
-            { 
+            {
                 string albumTitle = _context.Albums.Where(a => a.Id == id).Select(a => a.Title).FirstOrDefault()!;
                 ViewBag.AlbumTitle = albumTitle;
-               
-                pagedPhoto = _context.Photos.Where(p => p.AlbumId == id).OrderBy(x => x.Id).ToPagedList(pageNumber, pageSize);               
-            }  
+
+                pagedPhoto = _context.Photos.Where(p => p.AlbumId == id).OrderBy(x => x.Id).ToPagedList(pageNumber, pageSize);
+            }
             return View(pagedPhoto);
         }
 
@@ -365,13 +365,30 @@ namespace WebAppMvc.Controllers
                 {
                     System.IO.File.Delete(filePath);
                 }
-                _context.Photos.Remove(photo); 
-                 await _context.SaveChangesAsync();
+                _context.Photos.Remove(photo);
+                await _context.SaveChangesAsync();
             }
-           
+
             return Ok(new { message = "Photo deteled successfully", count = selectedIds.Count });
         }
 
+
+        public JsonResult GetPhotos(int? id)
+        {
+            List<Photo> Photos = _context.Photos.ToList();
+
+            if (id != null || id == 0)
+            {
+                Photos = Photos.Where(p => p.AlbumId == id).ToList();
+
+            }
+            return Json(new { data = Photos });
+        }
+
+        public IActionResult PhotoGallery1()
+        {
+            return View();
+        }
 
     }
 }

@@ -30,19 +30,21 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
-                        <li>
+                        @* <li>
                             <a class="nav-link text-dark" data-bs-toggle="modal" data-bs-target="#loginModel">Login</a>
-                        </li>
+                        </li> *@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Albums" asp-action="index">Album</a>
                         </li>
-                        <li class="nav-item">
+                       @*  <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Albums" asp-action="AddPhoto">Add Photo</a>
-                        </li>
+                        </li> *@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Albums" asp-action="PhotoGallery">Gallery</a>
                         </li>
-                        
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Albums" asp-action="PhotoGallery1">Gallery1</a>
+                        </li>
                         @{
                             try
                             {
