@@ -11,14 +11,17 @@
         float: right !important;
         top: -9px !important;
         right: -9px !important;
-    }
+    }  
 </style>
 <h1> @ViewData["Title"] : @ViewData["AlbumTitle"]</h1>
 
 <p>
     <a asp-action="AddPhoto">Add New</a> | <a asp-action="Index">Albums</a>
 </p>
-<div>
+@{
+    if (Model.Any())
+    {
+       <div>
     <div class="form-check">
         <input class="form-check-input" type="checkbox" value="" id="checkAll">
         <label class="form-check-label" for="checkAll">
@@ -36,6 +39,8 @@
             <div class="col-md-3 mb-2">
                 <div class="card shadow-sm" style="max-height: 170px;">
                     <div class="card-body text-center p-2">
+
+                        <input class="form-check-input cbPhoto float-start border border-primary border-1" name="checkboxItem" type="checkbox" value="@item.Id" id="checkboxItem">
                         @if (User.Identity!.IsAuthenticated)
                         {
                             <form asp-action="PhotoDelete">
@@ -47,7 +52,7 @@
                         }
                         <img src="~/@config["Uploading:PhotoUpload"]/@item.ImageUrl" class="img img-fluid rounded-3" style="max-height: 100px;" alt="@item.Title"><br />
                         <span class="text-muted" style="font-size:10px">@item.Title</span>
-                        <input class="form-check-input cbPhoto" name="checkboxItem" type="checkbox" value="@item.Id" id="checkboxItem">
+                       
                     </div>
                 </div>
             </div>
@@ -77,18 +82,29 @@
             })
         </div>
     </div>
-</div>
+</div> 
+    }
+}
+
+
 @section Scripts {
 
     <script>
            // When "Select All" checkbox is clicked
            $("#checkAll").click(function () {
+                if ($(".cbPhoto").length===0) {//if no item in the page.
+                   $("#btnDelete").removeClass("d-inline").addClass("d-none");
+               }
+               else{
+
                $(".cbPhoto").prop("checked", this.checked);
                if(this.checked){
                     $("#btnDelete").removeClass("d-none").addClass("d-inline");
                }else{
                     $("#btnDelete").removeClass("d-inline").addClass("d-none");
                }
+               }
+
            });
 
            // If any item checkbox is unchecked, uncheck "Select All"

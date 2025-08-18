@@ -20,7 +20,9 @@
             @Html.DisplayFor(modelItem => item.Description)<br />
             @Html.DisplayFor(modelItem => item.CreatedOn)<br />
             Total Photos: @Html.DisplayFor(modelItem => item.TotalPhotos)<br />
-             <a asp-action="Delete" asp-route-id="@item.Id"><i class="bi bi-trash text-danger"></i></a>
+            <a asp-action="AddPhoto"><i class="bi bi-cloud-arrow-up text-primary"></i></a> | 
+            <a asp-action="PhotoGallery" asp-route-id="@item.Id"><i class="bi bi-journal-album text-primary"></i></a> | 
+            <a asp-action="Delete" asp-route-id="@item.Id"><i class="bi bi-trash text-danger"></i></a>
         </div>
     }
 
