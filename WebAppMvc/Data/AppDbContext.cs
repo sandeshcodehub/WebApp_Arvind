@@ -13,5 +13,8 @@ namespace WebAppMvc.Data
         public DbSet<Feedback> Feedbacks { get; set; }
         public DbSet<Album> Albums { get; set; }
         public DbSet<Photo> Photos { get; set; }
+        public DbSet<Information> Informations { get; set; }
+        public DbSet<InfoType> InfoTypes { get; set; }
+        public DbSet<Faculty> Faculties { get; set; }
     }
 }

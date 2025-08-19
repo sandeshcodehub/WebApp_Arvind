@@ -42,6 +42,7 @@ if (!app.Environment.IsDevelopment())
 //        var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 //        await ContextSeed.SeedRolesAsync(userManager, roleManager);
 //        await ContextSeed.SeedSuperAdminAsync(userManager, roleManager);
+//        await ContextSeed.SeedDbDefault(context);
 //    }
 //    catch (Exception ex)
 //    {
