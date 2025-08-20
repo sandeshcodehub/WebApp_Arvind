@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Diagnostics;
 using System.Net.Mail;
+using WebAppMvc.Data;
 using WebAppMvc.Domain;
 using WebAppMvc.Models;
 using WebAppMvc.Models.DTOs;
@@ -13,11 +15,14 @@ namespace WebAppMvc.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly SignInManager<AppUser> _signInManager;       
         private readonly UserManager<AppUser> _userManager;
-        public HomeController(ILogger<HomeController> logger, SignInManager<AppUser> signInManager, UserManager<AppUser> userManager)
+        private readonly AppDbContext _context;
+
+        public HomeController(ILogger<HomeController> logger, SignInManager<AppUser> signInManager, UserManager<AppUser> userManager,AppDbContext context)
         {
             _logger = logger;
             _signInManager = signInManager;           
             _userManager = userManager;
+           _context = context;
         }
 
         public IActionResult Index()
@@ -102,6 +107,15 @@ namespace WebAppMvc.Controllers
             {
                 return false;
             }
+        }
+
+        public IActionResult Info()
+        {
+            var InfoType = _context.InfoTypes.Where(x=>x.IsActive==true).Select(x=>new SelectListItem() { Text=x.InfoTypeName, Value=x.Id.ToString() }).ToList();
+            var Faculty = _context.Faculties.Where(x => x.IsActive == true).Select(x => new SelectListItem() { Text = x.FacultyName, Value = x.Id.ToString() }).ToList();
+            ViewBag.InfoTypeId = InfoType;
+            ViewBag.FacultyId = Faculty;
+            return View();
         }
     }
 }

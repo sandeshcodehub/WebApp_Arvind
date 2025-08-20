@@ -33,7 +33,8 @@ namespace WebAppMvc.Domain.Entities
         
         [StringLength(500)]
         public string? WebUrl { get; set; } //incase when share link of external website or link
-
+        
+        [Required]
         public int InfoTypeId { get; set; }
         public InfoType InfoType { get; set; } = new InfoType();//NEWS, NOTICE, EVENT, etc.
 
