@@ -1,0 +1,66 @@
+﻿@model AddInfoDTO
+@{
+    ViewData["Title"] = "Add Information";
+}
+<h4>@ViewData["Title"]</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="AddInformation" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group mb-3">
+                <label asp-for="InfoTypeId" class="control-label"></label>
+                <select asp-for="InfoTypeId" class="form-select" asp-items="ViewBag.InfoTypeId">
+                    <option value="">-Select-</option>
+                </select>
+                <span asp-validation-for="InfoTypeId" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="FacultyId" class="control-label"></label>
+                <select asp-for="FacultyId" class="form-select" asp-items="ViewBag.FacultyId">
+                    <option value="">-All-</option>
+                </select>
+                <span asp-validation-for="FacultyId" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Content" class="control-label"></label>
+                <input asp-for="Content" class="form-control" />
+                <span asp-validation-for="Content" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3 mb-3">
+                <label asp-for="Attachment" class="control-label"></label>
+                <input asp-for="Attachment" class="form-control" accept=".pdf,.doc,.docx"  />
+                <span asp-validation-for="Attachment" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="WebUrl" class="control-label"></label>
+                <input asp-for="WebUrl" class="form-control" />
+                <span asp-validation-for="WebUrl" class="text-danger"></span>
+            </div>  
+            <div class="form-group mb-3">
+                <label asp-for="CreatedAt" class="control-label"></label>
+                <input asp-for="CreatedAt" class="form-control" type="date" />
+                <span asp-validation-for="CreatedAt" class="text-danger"></span>
+            </div>           
+            <div class="form-group mb-3">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
